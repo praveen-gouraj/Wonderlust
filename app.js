@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV != "production") {
   require('dotenv').config();
 }
-
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -84,14 +83,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/demoUser", async (req, res) => {
-//   let fakeUser = new User({ 
-//     email: "demo@example.com",
-//     username: "demoUser"
-//   });
-//   let registeredUser = await User.register(fakeUser, "helloworld");
-//   res.send(registeredUser);
-// });
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
@@ -108,15 +102,13 @@ app.all("*", (req, res, next) => {
 // })
 
 app.use((err, req, res, next) => {
-    console.log("===== FULL ERROR =====");
     console.error(err);
-
     const statusCode = err.statusCode || 500;
     const message = err.message || "Something went wrong!";
-
     res.status(statusCode).render("error.ejs", { message });
 });
 
-app.listen(8080, () => {
-  console.log('server is running on port 8080');
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
